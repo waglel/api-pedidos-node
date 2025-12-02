@@ -1,0 +1,127 @@
+{
+	"info": {
+		"_postman_id": "2ee2c99b-0cfe-43d7-81a0-452d63f26f7f",
+		"name": "API Pedidos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26680470"
+	},
+	"item": [
+		{
+			"name": "Criar Pedido (POST /order)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"numeroPedido\": \"v10000001vdb-01\",\n  \"valorTotal\": 5000,\n  \"dataCriacao\": \"2023-07-19T12:24:11.5299601+00:00\",\n  \"items\": [\n    {\n      \"idItem\": \"2434\",\n      \"quantidadeItem\": 2,\n      \"valorItem\": 2500\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Buscar Pedido por ID (GET /order/:id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/order/v10000001vdb-01",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"order",
+						"v10000001vdb-01"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar Pedidos (GET /order/list)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/order/list",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"order",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Atualizar Pedido (PUT /order/:id)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"valorTotal\": 7500,\n  \"items\": [\n    {\n      \"idItem\": \"2434\",\n      \"quantidadeItem\": 3,\n      \"valorItem\": 2500\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/order/v10000001vdb-01",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"order",
+						"v10000001vdb-01"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deletar Pedido (DELETE /order/:id)",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/order/v10000001vdb-01",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"order",
+						"v10000001vdb-01"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
