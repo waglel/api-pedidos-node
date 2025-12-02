@@ -1,7 +1,7 @@
 const Order = require("../models/Order");
 
 // Criar pedido
-exports.createOrder = async (req, res) => {
+async function createOrder(req, res) {
   try {
     const { numeroPedido, valorTotal, dataCriacao, items } = req.body;
 
@@ -28,26 +28,31 @@ exports.createOrder = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: "Erro ao criar pedido.", error });
   }
-};
+}
 
-// Obter pedido por número
-exports.getOrder = async (req, res) => {
+// Buscar por id
+async function getOrderById(req, res) {
   try {
-    const orderId = req.params.id;
+    const id = req.params.id;
 
-    const order = await Order.findOne({ orderId });
+    const order = await Order.findOne({ orderId: id });
 
-    if (!order) return res.status(404).json({ error: "Pedido não encontrado." });
+    if (!order) {
+      return res.status(404).json({ message: "Pedido não encontrado." });
+    }
 
-    return res.status(200).json(order);
+    res.status(200).json(order);
 
   } catch (error) {
-    return res.status(500).json({ message: "Erro ao buscar pedido.", error });
+    res.status(500).json({
+      message: "Erro ao buscar pedido.",
+      error
+    });
   }
-};
+}
 
 // Listar todos
-exports.listOrders = async (_, res) => {
+async function listOrders(_, res) {
   try {
     const orders = await Order.find();
     return res.status(200).json(orders);
@@ -55,10 +60,10 @@ exports.listOrders = async (_, res) => {
   } catch (error) {
     return res.status(500).json({ message: "Erro ao listar pedidos.", error });
   }
-};
+}
 
 // Atualizar pedido
-exports.updateOrder = async (req, res) => {
+async function updateOrder(req, res) {
   try {
     const orderId = req.params.id;
     const data = req.body;
@@ -77,10 +82,10 @@ exports.updateOrder = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: "Erro ao atualizar pedido.", error });
   }
-};
+}
 
-// Deletar pedido
-exports.deleteOrder = async (req, res) => {
+// Deletar
+async function deleteOrder(req, res) {
   try {
     const orderId = req.params.id;
 
@@ -94,4 +99,13 @@ exports.deleteOrder = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: "Erro ao deletar pedido.", error });
   }
+}
+
+// EXPORTAR TUDO CORRETAMENTE
+module.exports = {
+  createOrder,
+  getOrderById,
+  listOrders,
+  updateOrder,
+  deleteOrder
 };
