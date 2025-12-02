@@ -1,22 +1,15 @@
 const Order = require("../models/Order");
 
-/* ============================================================
-   1 — CREATE ORDER (POST /order)
-   ============================================================ */
-async function createOrder(req, res) {
+// Criar pedido
+exports.createOrder = async (req, res) => {
   try {
     const { numeroPedido, valorTotal, dataCriacao, items } = req.body;
 
-    // Validações básicas
     if (!numeroPedido || !valorTotal || !dataCriacao || !items) {
-      return res.status(400).json({ error: "Campos obrigatórios faltando." });
+      return res.status(400).json({ error: "Dados inválidos no body." });
     }
 
-    if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: "Items deve ser um array com pelo menos 1 item." });
-    }
-
-    // Mapping solicitado pelo desafio
+    // mapping dos campos
     const mappedOrder = {
       orderId: numeroPedido,
       value: valorTotal,
@@ -29,38 +22,22 @@ async function createOrder(req, res) {
     };
 
     const newOrder = await Order.create(mappedOrder);
-
     return res.status(201).json(newOrder);
 
   } catch (error) {
-    // Erro de chave duplicada (orderId)
-    if (error.code === 11000) {
-      return res.status(400).json({ 
-        error: "Já existe um pedido com esse número.",
-        detalhes: error.keyValue 
-      });
-    }
-
     return res.status(500).json({ message: "Erro ao criar pedido.", error });
   }
-}
+};
 
-
-/* ============================================================
-   2 — GET ORDER BY ID (GET /order/:id)
-   ============================================================ */
-async function getOrderById(req, res) {
+// Buscar pedido por ID
+exports.getOrderById = async (req, res) => {
   try {
-    const id = req.params.id;
+    const orderId = req.params.id;
 
-    if (!id) {
-      return res.status(400).json({ error: "ID é obrigatório." });
-    }
-
-    const order = await Order.findOne({ orderId: id });
+    const order = await Order.findOne({ orderId });
 
     if (!order) {
-      return res.status(404).json({ message: "Pedido não encontrado." });
+      return res.status(404).json({ error: "Pedido não encontrado." });
     }
 
     return res.status(200).json(order);
@@ -68,58 +45,27 @@ async function getOrderById(req, res) {
   } catch (error) {
     return res.status(500).json({ message: "Erro ao buscar pedido.", error });
   }
-}
+};
 
-
-/* ============================================================
-   3 — LIST ALL ORDERS (GET /order/list)
-   ============================================================ */
-async function listOrders(_, res) {
+// Listar pedidos
+exports.listOrders = async (_, res) => {
   try {
     const orders = await Order.find();
     return res.status(200).json(orders);
-
   } catch (error) {
     return res.status(500).json({ message: "Erro ao listar pedidos.", error });
   }
-}
+};
 
-
-/* ============================================================
-   4 — UPDATE ORDER (PUT /order/:id)
-   ============================================================ */
-async function updateOrder(req, res) {
+// Atualizar pedido
+exports.updateOrder = async (req, res) => {
   try {
     const orderId = req.params.id;
-    const { valorTotal, dataCriacao, items } = req.body;
+    const data = req.body;
 
-    if (!orderId) {
-      return res.status(400).json({ error: "ID é obrigatório." });
-    }
-
-    const mappedUpdate = {};
-
-    if (valorTotal !== undefined) mappedUpdate.value = valorTotal;
-    if (dataCriacao !== undefined) mappedUpdate.creationDate = dataCriacao;
-
-    // Se enviou items, remapeia corretamente
-    if (items !== undefined) {
-      if (!Array.isArray(items) || items.length === 0) {
-        return res.status(400).json({ error: "Items deve ser um array válido." });
-      }
-
-      mappedUpdate.items = items.map(item => ({
-        productId: item.idItem,
-        quantity: item.quantidadeItem,
-        price: item.valorItem
-      }));
-    }
-
-    const updated = await Order.findOneAndUpdate(
-      { orderId },
-      mappedUpdate,
-      { new: true }
-    );
+    const updated = await Order.findOneAndUpdate({ orderId }, data, {
+      new: true,
+    });
 
     if (!updated) {
       return res.status(404).json({ error: "Pedido não encontrado." });
@@ -130,19 +76,12 @@ async function updateOrder(req, res) {
   } catch (error) {
     return res.status(500).json({ message: "Erro ao atualizar pedido.", error });
   }
-}
+};
 
-
-/* ============================================================
-   5 — DELETE ORDER (DELETE /order/:id)
-   ============================================================ */
-async function deleteOrder(req, res) {
+// Deletar pedido
+exports.deleteOrder = async (req, res) => {
   try {
     const orderId = req.params.id;
-
-    if (!orderId) {
-      return res.status(400).json({ error: "ID é obrigatório." });
-    }
 
     const deleted = await Order.findOneAndDelete({ orderId });
 
@@ -155,16 +94,4 @@ async function deleteOrder(req, res) {
   } catch (error) {
     return res.status(500).json({ message: "Erro ao deletar pedido.", error });
   }
-}
-
-
-/* ============================================================
-   EXPORTA TUDO
-   ============================================================ */
-module.exports = {
-  createOrder,
-  getOrderById,
-  listOrders,
-  updateOrder,
-  deleteOrder
 };
